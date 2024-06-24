@@ -1,0 +1,16 @@
+[package]
+publish = false
+name = "http-pong"
+version = "0.1.0"
+authors = ["Dengwu Wang <me@dengwu.wang>"]
+description = "http pong based on envoy"
+license = "MIT"
+edition = "2021"
+
+[lib]
+name = "pong"
+crate-type = ["cdylib"]
+
+[dependencies]
+proxy-wasm = "0.2"
+log = "0.4"

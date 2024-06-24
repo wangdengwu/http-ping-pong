@@ -1,0 +1,10 @@
+services:
+  http-ping:
+    container_name: http-ping
+    image: http-ping
+    build:
+      context: .
+    ports:
+      - "9999:9999"
+    extra_hosts:
+      - host.docker.internal:host-gateway

@@ -1,0 +1,10 @@
+services:
+  http-pong:
+    container_name: http-pong
+    image: http-pong
+    build:
+      context: .
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml

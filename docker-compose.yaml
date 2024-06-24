@@ -1,0 +1,21 @@
+services:
+  http-ping:
+    container_name: http-ping
+    image: http-ping
+    build:
+      context: http-ping
+    hostname: ping
+    ports:
+      - "9999:9999"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+  http-pong:
+    container_name: http-pong
+    image: http-pong
+    build:
+      context: http-pong
+    hostname: pong
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./http-pong/envoy.yaml:/etc/envoy/envoy.yaml
