@@ -9,14 +9,21 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	xHost := r.Header.Get("x-host")
 	if xHost == "" {
+		xHost = os.Getenv("X-HOST")
+	}
+	if xHost == "" {
 		http.Error(w, "x-host header is missing", http.StatusBadRequest)
 		return
+	}
+	if !strings.HasPrefix(xHost, "http") {
+		xHost = "http://" + xHost
 	}
 	targetURL, err := url.Parse(xHost)
 	if err != nil {
@@ -25,6 +32,18 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
+
+	rewrite := r.Header.Get("x-rewrite")
+	if rewrite == "" {
+		rewrite = os.Getenv("X-REWRITE")
+	}
+	if rewrite != "" {
+		proxy = &httputil.ReverseProxy{
+			Rewrite: func(r *httputil.ProxyRequest) {
+				r.SetURL(targetURL)
+			},
+		}
+	}
 	proxy.ServeHTTP(w, r)
 }
 
@@ -35,7 +54,7 @@ func main() {
 	}
 
 	go func() {
-		fmt.Println("Server is running on port 8080")
+		fmt.Println("Server is running on port 9999")
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			fmt.Printf("Error: %v\n", err)
 		}
